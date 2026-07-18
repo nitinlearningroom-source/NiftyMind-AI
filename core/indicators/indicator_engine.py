@@ -323,18 +323,20 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     def summary(self):
         self.logger.info("Generating summary")
+        
         latest = self.df.iloc[-1]
         return {
             "Close": float(latest["Close"]),
-            "EMA20": float(latest["EMA_20"]) if "EMA_20" in latest and not pd.isna(latest["EMA_20"]) else None,
-            "EMA50": float(latest["EMA_50"]) if "EMA_50" in latest and not pd.isna(latest["EMA_50"]) else None,
+            "EMA_20": float(latest["EMA_20"]) if "EMA_20" in latest and not pd.isna(latest["EMA_20"]) else None,
+            "EMA_50": float(latest["EMA_50"]) if "EMA_50" in latest and not pd.isna(latest["EMA_50"]) else None,
+            "EMA_200": float(latest["EMA_200"]) if "EMA_200" in latest and not pd.isna(latest["EMA_200"]) else None,
             "RSI": float(latest["RSI"]) if "RSI" in latest and not pd.isna(latest["RSI"]) else None,
             "MACD": float(latest.get("MACD")) if "MACD" in latest and not pd.isna(latest["MACD"]) else None,
             "ATR": float(latest.get("ATR_14")) if "ATR_14" in latest and not pd.isna(latest["ATR_14"]) else None,
             "VWAP": float(latest.get("VWAP")) if "VWAP" in latest and not pd.isna(latest["VWAP"]) else None,
             "SuperTrend": float(latest.get("SUPERTREND")) if "SUPERTREND" in latest and not pd.isna(latest["SUPERTREND"]) else None,
             "ADX": float(latest.get("ADX")) if "ADX" in latest and not pd.isna(latest["ADX"]) else None,
-            "Signal": self.supertrend_signal().value,
+            "SUPERTREND_DIRECTION": self.supertrend_signal().value,
             "TrendStrength": self.adx_strength().value,
             "Stoch RSI K": float(latest["STOCH_RSI_K"]) if "STOCH_RSI_K" in latest and not pd.isna(latest["STOCH_RSI_K"]) else None,
             "Stoch RSI D": float(latest["STOCH_RSI_D"]) if "STOCH_RSI_D" in latest and not pd.isna(latest["STOCH_RSI_D"]) else None,
@@ -360,12 +362,16 @@ class IndicatorEngine(BaseIndicator):
         }
 
     def calculate_all(self):
+        self.donchian()
+        self.obv()
+        self.pivot_points()
+        self.supertrend()
         self.ema()
         self.rsi()
         self.macd()
         self.atr()
         self.vwap()
-        self.bollinger()
-        self.supertrend()
+        self.adx()
+        self.stochastic_rsi()
 
         return self.df
