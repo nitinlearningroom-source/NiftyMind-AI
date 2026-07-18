@@ -151,12 +151,6 @@ class MarketAnalyzer:
             breakout,
             volatility
         )
-        print("=" * 50) 
-        print("Result :", result)
-        print("Type   :", type(result))
-        print("Length :", len(result))
-        print("=" * 50)
-
         bullish, bearish = result
 
         recommendation = self.generate_recommendation(
