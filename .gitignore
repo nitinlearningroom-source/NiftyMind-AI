@@ -1,0 +1,27 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+
+# Testing
+.pytest_cache/
+
+# OS
+Thumbs.db
+.DS_Store
