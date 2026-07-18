@@ -38,7 +38,11 @@ class IndicatorEngine(BaseIndicator):
     # -------------------------
     # RSI
     # -------------------------
-    def rsi(self, period=14):
+    def rsi(self, period=None):
+
+        if period is None:
+            period = settings.RSI_LENGTH
+
         self.df = MomentumIndicators(self.df).rsi(period)
         return self.df
 
@@ -47,9 +51,9 @@ class IndicatorEngine(BaseIndicator):
     # -------------------------
     def macd(
         self,
-        fast: int = settings.MACD["FAST"],
-        slow: int = settings.MACD["SLOW"],
-        signal: int = settings.MACD["SIGNAL"],
+        fast: int = settings.MACD_FAST,
+        slow: int = settings.MACD_SLOW,
+        signal: int = settings.MACD_SIGNAL,
     ) -> pd.DataFrame:
         """
         Calculate the Moving Average Convergence Divergence (MACD).
@@ -83,7 +87,11 @@ class IndicatorEngine(BaseIndicator):
     # ATR 
     # -------------------------
     
-    def atr(self, period=14):
+    def atr(self, period=None):
+
+        if period is None:
+            period = settings.ATR_LENGTH
+
         self.df = VolatilityIndicators(self.df).atr(period)
         return self.df
     
@@ -98,7 +106,13 @@ class IndicatorEngine(BaseIndicator):
     # Bollinger Bands
     #-------------------------
 
-    def bollinger(self, period=20, std=2.0):
+    def bollinger(self, period=None, std=None):
+        if period is None:
+            period = settings.BB_LENGTH
+
+        if std is None:
+            std = settings.BB_STD
+
         bb = ta.bbands(
             close=self.df["Close"],
             length=period,
@@ -112,8 +126,6 @@ class IndicatorEngine(BaseIndicator):
             bb.columns[3]: "BB_Bandwidth",
             bb.columns[4]: "BB_Percent"
         })
-
-        self.df = pd.concat([self.df, bb], axis=1)
         self._append_indicator(bb)
         return self.df
     
@@ -122,9 +134,15 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     def supertrend(
             self,
-            atr_period=10,
-            multiplier=3
+            atr_period=None,
+            multiplier=None
         ):
+
+        if atr_period is None:
+            atr_period = settings.SUPERTREND_LENGTH
+
+        if multiplier is None:
+            multiplier = settings.SUPERTREND_MULTIPLIER
 
         self.df = TrendIndicators(self.df).supertrend(
             atr_period,
@@ -144,7 +162,11 @@ class IndicatorEngine(BaseIndicator):
     #------------------------- 
     #ADX
     #-------------------------
-    def adx(self, length=14):
+    def adx(self, length=None):
+
+        if length is None:
+            length = settings.ADX_LENGTH
+
         self.df = TrendIndicators(self.df).adx(length)
         return self.df
 
@@ -172,8 +194,27 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     # Stochastic RSI
     #-------------------------
-    def stoch_rsi(self):
-        self.df = MomentumIndicators(self.df).stoch_rsi()
+    def stochastic_rsi(
+        self,
+        length: int = settings.STOCH_RSI_LENGTH,
+        rsi_length: int = settings.STOCH_RSI_RSI_LENGTH,
+        k: int = settings.STOCH_RSI_K,
+        d: int = settings.STOCH_RSI_D,
+    ):
+        stoch = ta.stochrsi(
+            close=self.df["Close"],
+            length=length,
+            rsi_length=rsi_length,
+            k=k,
+            d=d,
+        )
+
+        stoch.columns = [
+            "STOCH_RSI_K",
+            "STOCH_RSI_D",
+        ]
+
+        self._append_indicator(stoch)
         return self.df
 
     #-------------------------
@@ -244,7 +285,10 @@ class IndicatorEngine(BaseIndicator):
 
         return Signal.HOLD
 
-    def donchian(self, length=20):
+    def donchian(self, length=None):
+        if length is None:
+            length = settings.DONCHIAN_LENGTH
+
         self.df = SupportResistanceIndicators(
             self.df
         ).donchian(length)

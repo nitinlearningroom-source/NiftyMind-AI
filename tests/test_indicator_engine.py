@@ -10,21 +10,6 @@ df = history.get_daily("RELIANCE", 250)
 engine = IndicatorEngine(df)
 
 engine.donchian()
-
-print(
-    engine.df[
-        [
-            "Close",
-            "DONCHIAN_UPPER",
-            "DONCHIAN_LOWER",
-            "DONCHIAN_MIDDLE"
-        ]
-    ].tail()
-)
-
-print(engine.donchian_signal())
-
-
 engine.obv()
 engine.pivot_points()
 engine.supertrend()
@@ -34,5 +19,5 @@ engine.macd()
 engine.atr()
 engine.vwap()
 engine.adx()
-engine.stoch_rsi()
+engine.stochastic_rsi()
 print(engine.summary())
