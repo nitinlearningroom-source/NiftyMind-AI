@@ -9,6 +9,8 @@ df = history.get_daily("RELIANCE", 250)
 
 engine = IndicatorEngine(df)
 
+engine.ema()
+
 engine.donchian()
 engine.obv()
 engine.pivot_points()
