@@ -8,10 +8,6 @@ class VolumeIndicators:
         self.df = df.copy()
 
     def vwap(self):
-
-        # Save current index
-        
-
         # Set Datetime as index
         self.df["Datetime"] = pd.to_datetime(self.df["Datetime"])
         self.df.set_index("Datetime", inplace=True)
@@ -25,5 +21,14 @@ class VolumeIndicators:
 
         # Restore Datetime column
         self.df.reset_index(inplace=True)
+
+        return self.df
+    
+    def obv(self):
+
+        self.df["OBV"] = ta.obv(
+            close=self.df["Close"],
+            volume=self.df["Volume"]
+        )
 
         return self.df

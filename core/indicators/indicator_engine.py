@@ -1,6 +1,7 @@
 import pandas as pd
 import pandas_ta_classic as ta
 from core.indicators.momentum import MomentumIndicators
+from core.indicators.support_resistance import SupportResistanceIndicators
 from core.indicators.volatility import VolatilityIndicators
 from core.indicators.volume import VolumeIndicators
 from core.indicators.trend import TrendIndicators
@@ -173,6 +174,82 @@ class IndicatorEngine:
         return Signal.HOLD
 
     #-------------------------
+    #obv
+    #-------------------------
+    def obv(self):
+        self.df = VolumeIndicators(self.df).obv()
+        return self.df
+    
+    #-------------------------
+    # OBV Signal - helper
+    #-------------------------
+    def obv_signal(self):
+        latest = self.df.iloc[-1]["OBV"]
+        previous = self.df.iloc[-2]["OBV"]
+
+        if latest > previous:
+            return Signal.BUY
+
+        elif latest < previous:
+            return Signal.SELL
+
+        return Signal.HOLD
+    
+    #-------------------------
+    # Pivot Points  
+    #-------------------------
+    def pivot_points(self):
+
+        self.df = SupportResistanceIndicators(
+            self.df
+        ).pivot_points()
+
+        return self.df
+    
+    #-------------------------
+    # Pivot Signal - helper
+    #-------------------------
+    def pivot_signal(self):
+
+        latest = self.df.iloc[-1]
+
+        close = latest["Close"]
+
+        if close > latest["R1"]:
+            return Signal.BUY
+
+        elif close < latest["S1"]:
+            return Signal.SELL
+
+        return Signal.HOLD
+
+    def donchian(self, length=20):
+        self.df = SupportResistanceIndicators(
+            self.df
+        ).donchian(length)
+
+        return self.df
+    
+    #-------------------------
+    # Donchian Signal - helper
+    #-------------------------
+    def donchian_signal(self):
+
+        latest = self.df.iloc[-1]
+        close = latest["Close"]
+
+        upper = latest["DONCHIAN_UPPER"]
+        lower = latest["DONCHIAN_LOWER"]
+
+        if close > upper:
+            return Signal.BUY
+
+        elif close < lower:
+            return Signal.SELL
+
+        return Signal.HOLD
+    
+    #-------------------------
     # Summary
     #-------------------------
     def summary(self):
@@ -192,6 +269,24 @@ class IndicatorEngine:
             "Stoch RSI K": float(latest["STOCH_RSI_K"]) if "STOCH_RSI_K" in latest and not pd.isna(latest["STOCH_RSI_K"]) else None,
             "Stoch RSI D": float(latest["STOCH_RSI_D"]) if "STOCH_RSI_D" in latest and not pd.isna(latest["STOCH_RSI_D"]) else None,
             "Momentum Signal": self.stoch_rsi_signal().value if "STOCH_RSI_K" in latest else None,
+            "OBV": float(latest["OBV"]) if "OBV" in latest and not pd.isna(latest["OBV"]) else None,
+            "OBV Signal": self.obv_signal().value if "OBV" in latest else None,
+            "Pivot Points": {
+                "Pivot": float(latest["PIVOT"]) if "PIVOT" in latest and not pd.isna(latest["PIVOT"]) else None,
+                "R1": float(latest["R1"]) if "R1" in latest and not pd.isna(latest["R1"]) else None,
+                "S1": float(latest["S1"]) if "S1" in latest and not pd.isna(latest["S1"]) else None,
+                "R2": float(latest["R2"]) if "R2" in latest and not pd.isna(latest["R2"]) else None,
+                "S2": float(latest["S2"]) if "S2" in latest and not pd.isna(latest["S2"]) else None,
+                "R3": float(latest["R3"]) if "R3" in latest and not pd.isna(latest["R3"]) else None,
+                "S3": float(latest["S3"]) if "S3" in latest and not pd.isna(latest["S3"]) else None,
+                "Pivot Signal": self.pivot_signal().value
+            },
+            "Donchian": {
+                "Upper": float(latest["DONCHIAN_UPPER"]) if "DONCHIAN_UPPER" in latest and not pd.isna(latest["DONCHIAN_UPPER"]) else None,
+                "Lower": float(latest["DONCHIAN_LOWER"]) if "DONCHIAN_LOWER" in latest and not pd.isna(latest["DONCHIAN_LOWER"]) else None,
+                "Middle": float(latest["DONCHIAN_MIDDLE"]) if "DONCHIAN_MIDDLE" in latest and not pd.isna(latest["DONCHIAN_MIDDLE"]) else None,
+                "Donchian Signal": self.donchian_signal().value
+            }
         }
 
     def calculate_all(self):
