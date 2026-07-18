@@ -1,3 +1,5 @@
+import config.logging_config
+
 def main():
 
     print("Welcome to NiftyMind-AI")

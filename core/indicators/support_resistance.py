@@ -5,9 +5,6 @@ from core.indicators import base_indicator
 
 class SupportResistanceIndicators(base_indicator.BaseIndicator):
 
-    def __init__(self, df):
-        self.df = df
-
     def pivot_points(self):
 
         high = self.df["High"].shift(1)
@@ -27,6 +24,7 @@ class SupportResistanceIndicators(base_indicator.BaseIndicator):
         self.df["R3"] = high + 2 * (pivot - low)
         self.df["S3"] = low - 2 * (high - pivot)
 
+        self.logger.info("Calculating Pivot Points")
         return self.df
     
     def donchian(self, length: int = 20):

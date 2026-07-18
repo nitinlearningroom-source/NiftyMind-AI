@@ -6,8 +6,6 @@ from core.indicators import base_indicator
 
 class TrendIndicators(base_indicator.BaseIndicator):
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
 
     def ema(self, periods):
 
@@ -16,7 +14,7 @@ class TrendIndicators(base_indicator.BaseIndicator):
                 self.df["Close"],
                 length=period
             )
-
+        self.logger.info("Calculating EMA for periods: %s", periods)
         return self.df
 
     def supertrend(
@@ -27,6 +25,7 @@ class TrendIndicators(base_indicator.BaseIndicator):
         """
         Calculate SuperTrend
         """
+        self.logger.info("Calculating SuperTrend with atr_period: %s, multiplier: %s", atr_period, multiplier)
 
         st = ta.supertrend(
             high=self.df["High"],
@@ -66,5 +65,5 @@ class TrendIndicators(base_indicator.BaseIndicator):
             [self.df, adx],
             axis=1
         )
-
+        self.logger.info("Calculating ADX for period: %s", length)
         return self.df

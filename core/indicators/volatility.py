@@ -6,9 +6,6 @@ from core.indicators import base_indicator
 
 class VolatilityIndicators(base_indicator.BaseIndicator):
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
-
     def atr(self, period: int = 14):
         """
         Calculate Average True Range (ATR).
@@ -20,7 +17,7 @@ class VolatilityIndicators(base_indicator.BaseIndicator):
             close=self.df["Close"],
             length=period,
         )
-
+        self.logger.info("Calculating ATR for period: %s", period)
         return self.df
 
     def bollinger(self, period: int = 20, std: float = 2.0):
@@ -35,5 +32,5 @@ class VolatilityIndicators(base_indicator.BaseIndicator):
         )
 
         self.df = pd.concat([self.df, bb], axis=1)
-
+        self.logger.info("Calculating Bollinger Bands for period: %s, std: %s", period, std)
         return self.df

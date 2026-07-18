@@ -11,8 +11,6 @@ from core.constants import  Signal, TrendStrength
 
 class IndicatorEngine(BaseIndicator):
 
-    def __init__(self, df: pd.DataFrame):
-        super().__init__(df)
 
     @property
     def data(self):
@@ -31,7 +29,6 @@ class IndicatorEngine(BaseIndicator):
                 self.df["Close"],
                 length=period
             )
-
         return self.df
          
 
@@ -44,6 +41,7 @@ class IndicatorEngine(BaseIndicator):
             period = settings.RSI_LENGTH
 
         self.df = MomentumIndicators(self.df).rsi(period)
+        self.logger.info("Calculating RSI for period: %s", period)
         return self.df
 
     # -------------------------
@@ -80,7 +78,7 @@ class IndicatorEngine(BaseIndicator):
             "MACD_SIGNAL",
         ]
         self._append_indicator(macd)
-
+        self.logger.info("Calculating MACD with fast: %s, slow: %s, signal: %s", fast, slow, signal)
         return self.df
     
     # -------------------------
@@ -93,6 +91,7 @@ class IndicatorEngine(BaseIndicator):
             period = settings.ATR_LENGTH
 
         self.df = VolatilityIndicators(self.df).atr(period)
+        self.logger.info("Calculating ATR for period: %s", period)
         return self.df
     
     #-------------------------
@@ -100,6 +99,7 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     def vwap(self):
         self.df = VolumeIndicators(self.df).vwap()
+        self.logger.info("Calculating VWAP")
         return self.df
     
     #-------------------------
@@ -127,6 +127,7 @@ class IndicatorEngine(BaseIndicator):
             bb.columns[4]: "BB_Percent"
         })
         self._append_indicator(bb)
+        self.logger.info("Calculating Bollinger Bands for period: %s, std: %s", period, std)
         return self.df
     
     #-------------------------
@@ -148,6 +149,7 @@ class IndicatorEngine(BaseIndicator):
             atr_period,
             multiplier
         )
+        self.logger.info("Calculating SuperTrend with atr_period: %s, multiplier: %s", atr_period, multiplier)
         return self.df
     
     #-------------------------
@@ -215,6 +217,7 @@ class IndicatorEngine(BaseIndicator):
         ]
 
         self._append_indicator(stoch)
+        self.logger.info("Calculating Stochastic RSI for period: %s", length)
         return self.df
 
     #-------------------------
@@ -240,6 +243,7 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     def obv(self):
         self.df = VolumeIndicators(self.df).obv()
+        self.logger.info("Calculating OBV")
         return self.df
     
     #-------------------------
@@ -265,7 +269,7 @@ class IndicatorEngine(BaseIndicator):
         self.df = SupportResistanceIndicators(
             self.df
         ).pivot_points()
-
+        self.logger.info("Calculating Pivot Points")
         return self.df
     
     #-------------------------
@@ -292,7 +296,7 @@ class IndicatorEngine(BaseIndicator):
         self.df = SupportResistanceIndicators(
             self.df
         ).donchian(length)
-
+        self.logger.info("Calculating Donchian Channels for length: %s", length)
         return self.df
     
     #-------------------------
@@ -318,6 +322,7 @@ class IndicatorEngine(BaseIndicator):
     # Summary
     #-------------------------
     def summary(self):
+        self.logger.info("Generating summary")
         latest = self.df.iloc[-1]
         return {
             "Close": float(latest["Close"]),

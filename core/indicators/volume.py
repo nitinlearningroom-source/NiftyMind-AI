@@ -6,9 +6,6 @@ from core.indicators import base_indicator
 
 class VolumeIndicators(base_indicator.BaseIndicator):
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df.copy()
-
     def vwap(self):
         # Set Datetime as index
         self.df["Datetime"] = pd.to_datetime(self.df["Datetime"])
@@ -23,7 +20,7 @@ class VolumeIndicators(base_indicator.BaseIndicator):
 
         # Restore Datetime column
         self.df.reset_index(inplace=True)
-
+        self.logger.info("Calculating VWAP")
         return self.df
     
     def obv(self):
@@ -32,5 +29,5 @@ class VolumeIndicators(base_indicator.BaseIndicator):
             close=self.df["Close"],
             volume=self.df["Volume"]
         )
-
+        self.logger.info("Calculating OBV")
         return self.df
