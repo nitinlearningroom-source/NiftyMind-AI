@@ -1,16 +1,18 @@
 import pandas as pd
 import pandas_ta_classic as ta
+from config import settings
+from core.indicators.base_indicator import BaseIndicator
 from core.indicators.momentum import MomentumIndicators
 from core.indicators.support_resistance import SupportResistanceIndicators
 from core.indicators.volatility import VolatilityIndicators
 from core.indicators.volume import VolumeIndicators
 from core.indicators.trend import TrendIndicators
-from core.constants import Signal, TrendStrength
+from core.constants import  Signal, TrendStrength
 
-class IndicatorEngine:
+class IndicatorEngine(BaseIndicator):
 
     def __init__(self, df: pd.DataFrame):
-        self.df = df.copy()
+        super().__init__(df)
 
     @property
     def data(self):
@@ -22,7 +24,7 @@ class IndicatorEngine:
     def ema(self, periods=None):
 
         if periods is None:
-            periods = [20, 50, 100, 200]
+            periods = settings.EMA_PERIODS
 
         for period in periods:
             self.df[f"EMA_{period}"] = ta.ema(
@@ -31,30 +33,49 @@ class IndicatorEngine:
             )
 
         return self.df
+         
 
     # -------------------------
     # RSI
     # -------------------------
     def rsi(self, period=14):
-
-        self.df["RSI"] = ta.rsi(
-            self.df["Close"],
-            length=period
-        )
-
+        self.df = MomentumIndicators(self.df).rsi(period)
         return self.df
 
     # -------------------------
     # MACD
     # -------------------------
-    def macd(self):
+    def macd(
+        self,
+        fast: int = settings.MACD["FAST"],
+        slow: int = settings.MACD["SLOW"],
+        signal: int = settings.MACD["SIGNAL"],
+    ) -> pd.DataFrame:
+        """
+        Calculate the Moving Average Convergence Divergence (MACD).
 
-        macd = ta.macd(self.df["Close"])
+        Args:
+            fast: Fast EMA period.
+            slow: Slow EMA period.
+            signal: Signal line EMA period.
 
-        self.df = pd.concat(
-            [self.df, macd],
-            axis=1
+        Returns:
+            DataFrame with MACD columns appended.
+        """
+        
+
+        macd = ta.macd(
+            close=self.df["Close"],
+            fast=fast,
+            slow=slow,
+            signal=signal,
         )
+        macd.columns = [
+            "MACD",
+            "MACD_HISTOGRAM",
+            "MACD_SIGNAL",
+        ]
+        self._append_indicator(macd)
 
         return self.df
     
@@ -63,7 +84,6 @@ class IndicatorEngine:
     # -------------------------
     
     def atr(self, period=14):
-        """TODO: Implement ATR"""
         self.df = VolatilityIndicators(self.df).atr(period)
         return self.df
     
@@ -94,6 +114,7 @@ class IndicatorEngine:
         })
 
         self.df = pd.concat([self.df, bb], axis=1)
+        self._append_indicator(bb)
         return self.df
     
     #-------------------------

@@ -20,3 +20,9 @@ DEFAULT_BB_PERIOD = 20
 DEFAULT_BB_STD = 2
 
 EMA_PERIODS = [5, 20, 50, 100, 200]
+
+MACD = {
+    "FAST": 12,
+    "SLOW": 26,
+    "SIGNAL": 9,
+}
