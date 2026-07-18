@@ -1,7 +1,9 @@
 import pandas as pd
 
+from core.indicators import base_indicator
 
-class SupportResistanceIndicators:
+
+class SupportResistanceIndicators(base_indicator.BaseIndicator):
 
     def __init__(self, df):
         self.df = df

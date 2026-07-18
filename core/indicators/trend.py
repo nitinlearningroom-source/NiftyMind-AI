@@ -1,8 +1,10 @@
 import pandas as pd
 import pandas_ta_classic as ta
 
+from core.indicators import base_indicator
 
-class TrendIndicators:
+
+class TrendIndicators(base_indicator.BaseIndicator):
 
     def __init__(self, df: pd.DataFrame):
         self.df = df
