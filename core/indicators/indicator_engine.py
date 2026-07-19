@@ -1,13 +1,13 @@
 import pandas as pd
 import pandas_ta_classic as ta
 from config import settings
+from core.constants.enums import Signal, TrendStrength
 from core.indicators.base_indicator import BaseIndicator
 from core.indicators.momentum import MomentumIndicators
 from core.indicators.support_resistance import SupportResistanceIndicators
 from core.indicators.volatility import VolatilityIndicators
 from core.indicators.volume import VolumeIndicators
 from core.indicators.trend import TrendIndicators
-from core.constants import  Signal, TrendStrength
 
 class IndicatorEngine(BaseIndicator):
 

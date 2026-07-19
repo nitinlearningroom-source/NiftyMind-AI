@@ -1,9 +1,6 @@
-from core.analyzer.enums import Breakout, Momentum, Recommendation, Trend, TrendStrength, Volatility
-import pandas as pd
+from core.constants.enums import Breakout, Momentum, Recommendation, Signal, Trend, TrendStrength, Volatility
+from core.models.models import MarketAnalysis
 
-from core.analyzer.models import MarketAnalysis
-from core.constants import Signal
-from core.indicators import trend
 
 class MarketAnalyzer:
 
