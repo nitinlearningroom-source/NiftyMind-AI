@@ -46,8 +46,7 @@ class OptionChainService:
                 under_exchange_segment=underlying.exchange_segment,
                 expiry=expiry_date
             )
-            print(response)
-           # return self._normalize_response(response=response, expiry=expiry_date, underlying=underlying)
+            return self._normalize_response(response=response, expiry=expiry_date, underlying=underlying)
 
         except Exception as ex:
             logger.exception("Failed to fetch option chain.")

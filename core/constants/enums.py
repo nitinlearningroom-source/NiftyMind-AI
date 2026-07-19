@@ -79,3 +79,9 @@ class InstrumentType(Enum):
     STOCK = "STOCK"
     COMMODITY = "COMMODITY"
     CURRENCY = "CURRENCY"
+
+class IVTrend(str, Enum):
+    RISING = "RISING"
+    FALLING = "FALLING"
+    STABLE = "STABLE"
+    UNKNOWN = "UNKNOWN"
