@@ -54,7 +54,7 @@ class OptionChainAnalysis:
     oi: OIAnalysis
     pcr: PCRAnalysis
     iv: IVAnalysis
-    #max_pain: MaxPainAnalysis
+    max_pain: MaxPainAnalysis
     greeks: GreeksAnalysis
 
 @dataclass
@@ -148,3 +148,15 @@ class GreeksAnalysis:
     net_vega: float
 
     interpretation: str
+
+
+@dataclass
+class MaxPainAnalysis:
+    max_pain_strike: float
+    total_loss: float
+
+    call_loss: float
+    put_loss: float
+
+    distance_from_spot: float
+    market_bias: str
