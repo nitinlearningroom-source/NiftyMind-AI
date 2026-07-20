@@ -1,22 +1,21 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Literal
 import pandas as pd
 from core.models.underlying import Underlying
 
 from core.constants.enums import (
     Breakout,
-    IVLevel,
     OITrend,
+    PCRTrend,
     SupportStrength,
     Trend,
     TrendStrength,
     Momentum,
     Volatility,
     Recommendation,
-    WritingType,
-    InstrumentType
+    VolumeConfirmation,
 )
+from strategies.enums import PCRSignal
 
 
 @dataclass
@@ -24,7 +23,7 @@ class MarketAnalysis:
     trend: Trend
     trend_strength: TrendStrength
     momentum: Momentum
-    volume_confirmation: bool
+    volume_confirmation: VolumeConfirmation
     breakout: Breakout
     volatility: Volatility
 
@@ -51,11 +50,11 @@ class OptionChainAnalysis:
     Contains the output of all individual analyzers.
     """
 
-    oi: OIAnalysis
-    pcr: PCRAnalysis
-    iv: IVAnalysis
-    max_pain: MaxPainAnalysis
-    greeks: GreeksAnalysis
+    oi_analysis: OIAnalysis
+    pcr_analysis: PCRAnalysis
+    iv_analysis: IVAnalysis
+    max_pain_analysis: MaxPainAnalysis
+    greeks_analysis: GreeksAnalysis
 
 @dataclass
 class OIAnalysis:
@@ -89,8 +88,10 @@ class OptionChainSnapshot:
 @dataclass
 class PCRAnalysis:
     value: float
-    signal: str
+    signal: PCRSignal
     interpretation: str
+
+
 
 @dataclass
 class IVAnalysis:
@@ -146,7 +147,7 @@ class GreeksAnalysis:
     net_gamma: float
     net_theta: float
     net_vega: float
-
+    
     interpretation: str
 
 

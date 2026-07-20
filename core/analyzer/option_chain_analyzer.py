@@ -1,5 +1,4 @@
 
-from core.analyzer import max_pain_analyzer
 from core.analyzer.greek_analyzer import GreeksAnalyzer
 from core.analyzer.iv_analyzer import IVAnalyzer
 from core.analyzer.max_pain_analyzer import MaxPainAnalyzer
@@ -40,9 +39,9 @@ class OptionChainAnalyzer:
         greeks = self.greeks_analyzer.analyze(snapshot)
 
         return OptionChainAnalysis(
-            oi=oi,
-            pcr=pcr,
-            iv=iv,
-            max_pain=max_pain,
-            greeks=greeks
+               oi_analysis=oi,
+               pcr_analysis=pcr,
+               iv_analysis=iv,
+               max_pain_analysis=max_pain,
+               greeks_analysis=greeks 
         )

@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class StrategyType(str, Enum):
@@ -33,3 +33,16 @@ class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
+
+class PCRSignal(Enum):
+    BULLISH = auto()
+    BEARISH = auto()
+    NEUTRAL = auto()
+    SLIGHTLY_BEARISH = auto()
+    STRONG_BULLISH = auto()
+    
+class IVRegime(Enum):
+    LOW = auto()
+    NORMAL = auto()
+    HIGH = auto()
+    EXTREME = auto()
