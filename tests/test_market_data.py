@@ -6,6 +6,3 @@ print(market.get_security_id("RELIANCE"))
 print(market.get_security_id("TCS"))
 print(market.get_security_id("INFY"))
 
-import inspect
-
-print(inspect.getsource(dhan.quote_data))

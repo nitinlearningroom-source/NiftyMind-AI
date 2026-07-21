@@ -8,10 +8,11 @@ class Trend(Enum):
 
 
 class TrendStrength(Enum):
-    WEAK = "WEAK"
+    SIDEWAYS = "SIDEWAYS"
+    WEAK = "WEAK_TREND"
+    STRONG = "STRONG_TREND"
     MODERATE = "MODERATE"
-    STRONG = "STRONG"
-    VERY_STRONG = "VERY_STRONG"
+    VERY_STRONG = "VERY_STRONG_TREND"
 
 
 class Momentum(Enum):
@@ -33,20 +34,21 @@ class Recommendation(Enum):
 
 class Breakout(Enum):
     NONE = "NONE"
-    BULLISH = "BULLISH"
+    BREAKOUT = "BREAKOUT"
     BEARISH = "BEARISH"
+    BULLISH = "BULLISH"
 
 class OITrend(Enum):
-    BULLISH = "Bullish"
-    BEARISH = "Bearish"
-    NEUTRAL = "Neutral"
+    BULLISH = "BULLISH"
+    BEARISH = "BEARISH"
+    NEUTRAL = "NEUTRAL"
 
 
 class IVLevel(Enum):
-    LOW = "Low"
-    NORMAL = "Normal"
-    HIGH = "High"
-    EXTREME = "Extreme"
+    LOW = "LOW"
+    NORMAL = "NORMAL"
+    HIGH = "HIGH"
+    EXTREME = "EXTREME"
 
 
 class WritingType(Enum):
@@ -85,3 +87,12 @@ class IVTrend(str, Enum):
     FALLING = "FALLING"
     STABLE = "STABLE"
     UNKNOWN = "UNKNOWN"
+
+class VolumeConfirmation(Enum):
+    CONFIRMED = "CONFIRMED"
+    NOT_CONFIRMED = "NOT_CONFIRMED"
+
+class PCRTrend(Enum):
+    BULLISH = "Bullish"
+    BEARISH = "Bearish"
+    NEUTRAL = "Neutral"

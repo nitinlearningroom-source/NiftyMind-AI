@@ -1,4 +1,4 @@
-from core.constants.enums import Breakout, Momentum, Recommendation, Signal, Trend, TrendStrength, Volatility
+from core.constants.enums import Breakout, Momentum, Recommendation, Signal, Trend, TrendStrength, Volatility, VolumeConfirmation
 from core.models.models import MarketAnalysis
 
 
@@ -60,9 +60,22 @@ class MarketAnalyzer:
         rsi = summary.get("RSI")
         macd = summary.get("MACD")
 
+        if rsi is None or macd is None:
+            signal = Momentum.NEUTRAL
+
+        elif rsi >= 60 and macd > 0:
+            signal = Momentum.BULLISH
+
+        elif rsi <= 40 and macd < 0:
+            signal = Momentum.BEARISH
+
+        else:
+            signal = Momentum.NEUTRAL
+
         return {
             "RSI": rsi,
-            "MACD": macd
+            "MACD": macd,
+            "SIGNAL": signal
         }
     
     def analyze_volatility(self):
@@ -71,35 +84,74 @@ class MarketAnalyzer:
         atr = summary.get("ATR")
         bb_upper = summary.get("BB_UPPER")
         bb_lower = summary.get("BB_LOWER")
+        close = summary.get("Close")
+
+        if atr is None:
+            signal = Volatility.NORMAL
+
+        elif atr > close * 0.02:
+            signal = Volatility.HIGH
+
+        elif atr < close * 0.008:
+            signal = Volatility.LOW
+
+        else:
+            signal = Volatility.NORMAL
 
         return {
             "ATR": atr,
             "BB_UPPER": bb_upper,
-            "BB_LOWER": bb_lower
+            "BB_LOWER": bb_lower,
+            "SIGNAL": signal
         }
+        
     
     def analyze_volume(self):
         summary = self.engine.summary()
 
-        obv = summary.get("OBV")    
+        obv = summary.get("OBV")
         vwap = summary.get("VWAP")
+        close = summary.get("Close")
+
+        if close > vwap and obv > 0:
+            signal = VolumeConfirmation.CONFIRMED
+
+        else:
+            signal = VolumeConfirmation.NOT_CONFIRMED
 
         return {
             "VWAP": vwap,
-            "OBV": obv
+            "OBV": obv,
+            "SIGNAL": signal
         }
     
     def analyze_breakout(self):
         summary = self.engine.summary()
+        
 
-        pivot_points = summary.get("PIVOT_POINTS")
-        donchian_upper = summary.get("DONCHIAN_UPPER")
-        donchian_lower = summary.get("DONCHIAN_LOWER")
+        pivot = summary.get("PIVOT_POINTS")
+        upper = summary.get("DONCHIAN_UPPER")
+        lower = summary.get("DONCHIAN_LOWER")
+        close = summary.get("Close")
+
+        if close is None or upper is None or lower is None:
+            signal = Breakout.NONE
+
+        else:
+            if close > upper:
+                signal = Breakout.BULLISH
+
+            elif close < lower:
+                signal = Breakout.BEARISH
+
+            else:
+                signal = Breakout.NONE
 
         return {
-            "Pivot Points": pivot_points,
-            "Donchian Upper": donchian_upper,
-            "Donchian Lower": donchian_lower
+            "PIVOT": pivot,
+            "DONCHIAN_UPPER": upper,
+            "DONCHIAN_LOWER": lower,
+            "SIGNAL": signal
         }
     
     def analyze_all(self):
@@ -157,10 +209,10 @@ class MarketAnalyzer:
         return MarketAnalysis(
             trend=trend,
             trend_strength=trend_strength,
-            momentum=momentum,
-            volume_confirmation=volume_confirmation,
-            breakout=breakout,
-            volatility=volatility,
+            momentum=momentum["SIGNAL"],
+            volume_confirmation=volume_confirmation["SIGNAL"],
+            breakout=breakout["SIGNAL"],
+            volatility=volatility["SIGNAL"],
             bullish_confidence=bullish,
             bearish_confidence=bearish,
             recommendation=recommendation

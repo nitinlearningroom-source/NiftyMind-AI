@@ -1,5 +1,6 @@
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
 from core.models.models import OptionAnalysisConfig, OptionChainSnapshot, PCRAnalysis
+from strategies.enums import PCRSignal
 
 
 class PCRAnalyzer(BaseOptionAnalyzer):
@@ -39,15 +40,15 @@ class PCRAnalyzer(BaseOptionAnalyzer):
         
     def _interpret(self, pcr: float):
         if pcr < 0.70:
-            return "BEARISH", "Excessive Call OI"
+            return PCRSignal.BEARISH,"Excessive Call OI"
 
         if pcr < 0.90:
-            return "SLIGHTLY_BEARISH", "Moderate bearish positioning"
+            return PCRSignal.SLIGHTLY_BEARISH, "Moderate bearish positioning"
 
         if pcr <= 1.10:
-            return "NEUTRAL", "Balanced positioning"
+            return PCRSignal.NEUTRAL, "Balanced positioning"
 
         if pcr <= 1.30:
-            return "BULLISH", "Strong Put positioning"
+            return PCRSignal.BULLISH, "Strong Put positioning"
 
-        return "STRONG_BULLISH", "Heavy Put positioning"
+        return PCRSignal.BULLISH, "Heavy Put positioning"
