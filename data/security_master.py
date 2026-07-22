@@ -1,91 +1,135 @@
+import pandas as pd
 from brokers.dhanhq.market import MarketData
-
+from data.model import Instrument
 
 class SecurityMasterManager:
 
     def __init__(self):
+
         self.market = MarketData()
+        
+        self.loaded = False
+
         self.df = None
-        self.symbol_index = {}
+
+        self.all = {}
+
+        self.equities = {}
+
+        self.indices = {}
+
+        self.futures = {}
+
+        self.options = {}
+
+        self.etfs = {}
+
+        self.currency = {}
+
+        self.commodity = {}
+        
 
     def load(self):
-        if self.df is None:
-            print("Loading Security Master...")
-            self.df = self.market.security_master()
 
-            # Normalize text columns
-            text_columns = [
-                "SEM_TRADING_SYMBOL",
-                "SEM_CUSTOM_SYMBOL",
-                "SM_SYMBOL_NAME",
-                "SEM_EXM_EXCH_ID",
-                "SEM_SEGMENT",
-                "SEM_SERIES",
-            ]
+        if self.loaded:
+            return
 
-            for col in text_columns:
-                self.df[col] = (
-                    self.df[col]
-                    .fillna("")
-                    .astype(str)
-                    .str.strip()
-                    .str.upper()
-                )
+        self.df  = self.market.security_master()
 
-            print(f"Loaded {len(self.df)} instruments.")
-            equities = self.df[
-                (self.df["SEM_EXM_EXCH_ID"] == "NSE")
-                & (self.df["SEM_SEGMENT"] == "E")
-                & (self.df["SEM_SERIES"] == "EQ")
-            ]
+        self._build_indexes()
 
-            self.symbol_index = {
-                row["SEM_TRADING_SYMBOL"]: row
-                for _, row in equities.iterrows()
-            }
-            print(f"Indexed {len(self.symbol_index)} NSE Equity symbols.")
-        return self.df  
-    
-    def get_security(self, symbol: str):
+        self.loaded = True
+
+    def _build_indexes(self):
+
+        for _, row in self.df.iterrows():
+
+            instrument = self._create_instrument(row)
+
+            symbol = instrument.symbol.upper()
+
+            self.all[symbol] = instrument
+
+            match instrument.instrument_type:
+
+                case "EQUITY":
+                    self.equities[symbol] = instrument
+
+                case "INDEX":
+                    self.indices[symbol] = instrument
+
+                case "FUTURE":
+                    self.futures[symbol] = instrument
+
+                case "OPTION":
+                    self.options[symbol] = instrument
+
+                case "ETF":
+                    self.etfs[symbol] = instrument
+
+                case "CURRENCY":
+                    self.currency[symbol] = instrument
+
+                case "COMMODITY":
+                    self.commodity[symbol] = instrument
+
+
+    def get_security(self, symbol) -> Instrument:
+
         self.load()
-        return self.symbol_index.get(symbol.strip().upper())
 
+        return self.all.get(symbol.upper())
+        
+    def get_equity(self, symbol)-> Instrument:
 
-    def get_security_id(self, symbol: str):
-        row = self.get_security(symbol)
+        self.load()
 
-        if row is None:
-            return None
+        return self.equities.get(symbol.upper())
+        
+    def get_index(self, symbol)-> Instrument:
 
-        return int(row["SEM_SMST_SECURITY_ID"])
-    def get_instrument_info(self, symbol: str):
-        """
-        Returns all information required by Dhan APIs.
-        """
+        self.load()
 
-        row = self.get_security(symbol)
+        return self.indices.get(symbol.upper())
+        
+    def get_future(self, symbol)-> Instrument:
 
-        if row is None:
-            raise ValueError(f"Symbol '{symbol}' not found.")
+        self.load()
 
-        # Exchange Segment Mapping
-        if row["SEM_EXM_EXCH_ID"] == "NSE" and row["SEM_SEGMENT"] == "E":
-            exchange_segment = "NSE_EQ"
-        elif row["SEM_EXM_EXCH_ID"] == "NSE" and row["SEM_SEGMENT"] == "D":
-            exchange_segment = "NSE_FNO"
-        elif row["SEM_EXM_EXCH_ID"] == "BSE":
-            exchange_segment = "BSE_EQ"
-        else:
-            raise ValueError(
-                f"Unsupported Exchange/Segment : "
-                f'{row["SEM_EXM_EXCH_ID"]}-{row["SEM_SEGMENT"]}'
-            )
+        return self.futures.get(symbol.upper())
+        
+    def get_option(self, symbol)-> Instrument:
 
-        return {
-            "symbol": row["SEM_TRADING_SYMBOL"],
-            "security_id": str(int(row["SEM_SMST_SECURITY_ID"])),
-            "exchange_segment": exchange_segment,
-            "instrument_type": row["SEM_INSTRUMENT_NAME"],
-            "series": row["SEM_SERIES"],
-            "instrument_code": row["SEM_EXCH_INSTRUMENT_TYPE"]
-        }
+        self.load()
+
+        return self.options.get(symbol.upper())
+        
+    def search(self, text)-> Instrument:
+
+        self.load()
+
+        text = text.upper()
+
+        return [
+            instrument
+            for symbol, instrument in self.all.items()
+                if text in symbol
+        ]
+    
+    def _create_instrument(self, row) -> Instrument:
+
+        return Instrument(
+
+            security_id=str(row["SEM_SMST_SECURITY_ID"]),
+            symbol=str(row["SEM_TRADING_SYMBOL"]).strip().upper(),
+            exchange_segment=str(row["SEM_EXM_EXCH_ID"]),
+            instrument_type=str(row["SEM_INSTRUMENT_NAME"]),
+
+            exchange=row.get("SEM_EXM_EXCH_ID"),
+            series=row.get("SEM_SERIES"),
+            lot_size=int(row.get("SEM_LOT_UNITS", 1)),
+
+            strike_price=row.get("SEM_STRIKE_PRICE"),
+            expiry_date=row.get("SEM_EXPIRY_DATE"),
+            option_type=row.get("SEM_OPTION_TYPE")
+        )

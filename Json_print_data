@@ -1,0 +1,12 @@
+import json
+
+
+class Convert_Json:
+
+    def convert(data):
+        json_ready_dict = {key: row.to_dict() for key, row in data}
+
+        # Convert the dictionary to a JSON formatted string
+        json_data = json.dumps(json_ready_dict, indent=4) 
+        print(json_data)
+
