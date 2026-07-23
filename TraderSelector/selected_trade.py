@@ -42,7 +42,7 @@ class TradeSelector:
         elif decision.decision == Decision.NO_TRADE:
             return SelectedTrade(
                 contract=option.atm_call,
-                action="NO Trade"
+                action="NO TRADE"
             )
             
 

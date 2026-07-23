@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from strategies.Rules.models import RuleResult
-from strategies.config import StrategyConfig
-from strategies.models import StrategyContext
+from Options_Rules.Rules.models import RuleResult
+from Options_Rules.config import StrategyConfig
+from Options_Rules.models import StrategyContext
 
 
 class BaseRule(ABC):

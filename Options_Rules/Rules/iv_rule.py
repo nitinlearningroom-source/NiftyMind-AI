@@ -1,7 +1,8 @@
-from strategies.Rules.base_rule import BaseRule
-from strategies.Rules.models import StrategyWeights
-from strategies.enums import IVRegime
-from strategies.models import StrategyContext
+
+
+from Options_Rules.Rules.base_rule import BaseRule
+from Options_Rules.enums import IVRegime
+from Options_Rules.models import StrategyContext, StrategyWeights
 
 
 class IVRule(BaseRule):

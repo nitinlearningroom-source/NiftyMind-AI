@@ -1,5 +1,8 @@
 
 
+from Options_Rules.Rules.rule_engine import RuleEngine
+from Options_Rules.Rules.rule_registry import RuleRegistry
+from Options_Rules.models import StrategyContext
 from TraderSelector.selected_trade import TradeSelector
 from brokers.dhanhq.historical_data import HistoricalDataService
 from core.analyzer import Underlying_Sentiments_analyzer
@@ -9,11 +12,14 @@ from core.constants.underlyings import NIFTY
 from core.indicators.indicator_engine import IndicatorEngine
 from data.Instrument_type import InstrumentType
 from decision_engine.decision_engine import DecisionEngine
-from option_chain.option_chain_analyzer import Option_Analyzer
-from option_chain.option_chain_service import Option_Service
-from strategies.Rules.rule_engine import RuleEngine
-from strategies.Rules.rule_registry import RuleRegistry
-from strategies.models import StrategyContext
+from risk_manager.capital_rule import CapitalRule
+from risk_manager.daily_loss_rule import DailyLossRule
+from risk_manager.max_position_rule import MaxPositionRule
+from risk_manager.risk_config import RiskConfig
+from risk_manager.riskmanager import RiskManager
+from risk_manager.trade_allowed_rule import TradeAllowedRule
+from risk_manager.trading_account import TradingAccount
+
 
 
 history = HistoricalDataService()
@@ -30,7 +36,6 @@ sentiment_analysis = underlying_Sentiments_Service.Get_Sentiment_OptionData(NIFT
 
 sentiment_result = Underlying_Sentiments_analyzer.Underlying_SentimentsAnalyzer().analyze(snapshot=sentiment_analysis)
 
-# print("option",option)
 
 engine: RuleEngine[list] = RuleEngine(
      RuleRegistry.option_buying()
@@ -46,7 +51,7 @@ rule_engine_result = engine.evaluate(strategy_context)
 decision_engine = DecisionEngine();
 decision_result = decision_engine.decide(context=strategy_context,rule_result=rule_engine_result)
 
-print("decision -",decision_result);
+#print("decision -",decision_result);
 
 tradeSelector = TradeSelector()
 selected_trade = tradeSelector.select(decision=decision_result,option=sentiment_result.Option_Analysis)
@@ -60,43 +65,43 @@ strategy_context = StrategyContext(
  )
 
 
-# account = TradingAccount(
-#     capital=500000,
-#     available_margin=400000,
-#     used_margin=100000,
-#     todays_loss=2000,
-#     open_positions=1,
-#     max_open_positions=3
-# )
+account = TradingAccount(
+    capital=500000,
+    available_margin=400000,
+    used_margin=100000,
+    todays_loss=2000,
+    open_positions=1,
+    max_open_positions=3
+)
 
-# risk_manager = RiskManager(
-#     config=RiskConfig(),
-#     rules=[
-#         TradeAllowedRule(),
-#         DailyLossRule(),
-#         CapitalRule(),
-#         MaxPositionRule()
-#     ]
-# )
+risk_manager = RiskManager(
+    config=RiskConfig(),
+    rules=[
+        TradeAllowedRule(),
+        DailyLossRule(),
+        CapitalRule(),
+        MaxPositionRule()
+    ]
+)
 
-# assessment = risk_manager.assess(context=strategy_context,account=account)
+assessment = risk_manager.assess(context=strategy_context,account=account)
 
-# print("=" * 60)
-# print("RISK MANAGER RESULT")
-# print("=" * 60)
+print("=" * 60)
+print("RISK MANAGER RESULT")
+print("=" * 60)
 
-# print(f"Approved : {assessment.approved}")
+print(f"Approved : {assessment.approved}")
 
-# if assessment.position_size:
-#     print(f"Quantity : {assessment.position_size.quantity}")
-#     print(f"Lots : {assessment.position_size.lots}")
-#     print(f"Capital Required : {assessment.position_size.capital_required}")
-#     print(f"Max Loss : {assessment.position_size.max_loss}")
+if assessment.position_size:
+    print(f"Quantity : {assessment.position_size.quantity}")
+    print(f"Lots : {assessment.position_size.lots}")
+    print(f"Capital Required : {assessment.position_size.capital_required}")
+    print(f"Max Loss : {assessment.position_size.max_loss}")
 
-# print("\nReasons")
-# for reason in assessment.reasons:
-#     print(f"✔ {reason}")
+print("\nReasons")
+for reason in assessment.reasons:
+    print(f"✔ {reason}")
 
-# print("\nWarnings")
-# for warning in assessment.warnings:
-#     print(f"⚠ {warning}")
+print("\nWarnings")
+for warning in assessment.warnings:
+    print(f"⚠ {warning}")

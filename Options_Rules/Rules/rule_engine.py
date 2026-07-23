@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from strategies.Rules.models import RuleResult
+
+from Options_Rules.Rules.models import RuleResult
 
 @dataclass(slots=True)
 class RuleEngineResult:

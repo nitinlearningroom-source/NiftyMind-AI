@@ -53,8 +53,6 @@ class TrendIndicators(base_indicator.BaseIndicator):
             length=length
         )
 
-        print(adx.columns)   # Keep this temporarily
-
         adx.columns = [
             "ADX",
             "DMP",

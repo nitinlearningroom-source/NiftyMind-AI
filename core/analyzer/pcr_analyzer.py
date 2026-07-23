@@ -1,6 +1,6 @@
+from Options_Rules.enums import PCRSignal
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
 from core.models.models import OptionAnalysisConfig, PCRAnalysis, Unserlying_SentimentSnapshot
-from strategies.enums import PCRSignal
 
 
 class PCRAnalyzer(BaseOptionAnalyzer):

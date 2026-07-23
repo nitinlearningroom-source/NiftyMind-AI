@@ -1,6 +1,6 @@
-from strategies.Rules.base_rule import BaseRule
-from strategies.Rules.models import StrategyWeights
-from strategies.models import StrategyContext, StrategyThresholds
+
+from Options_Rules.Rules.base_rule import BaseRule
+from Options_Rules.models import StrategyContext, StrategyThresholds, StrategyWeights
 
 
 class MaxPainRule(BaseRule):

@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from datetime import datetime
 import pandas as pd
+from Options_Rules.enums import PCRSignal
 from core.models.underlying import Underlying
 
 from core.constants.enums import (
     Breakout,
     OITrend,
-    PCRTrend,
     SupportStrength,
     Trend,
     TrendStrength,
@@ -17,8 +17,7 @@ from core.constants.enums import (
 )
 from option_chain.models.option_analysis import OptionAnalysis
 from option_chain.models.option_chain_snapshot import OptionSnapshot
-from option_chain.models.option_contract import OptionContract
-from strategies.enums import PCRSignal
+
 
 
 @dataclass
