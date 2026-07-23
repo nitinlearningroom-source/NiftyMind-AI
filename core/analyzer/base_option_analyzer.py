@@ -27,7 +27,6 @@ class BaseOptionAnalyzer(ABC):
         """
         Returns option chain filtered around ATM.
         """
-
         df = snapshot.sentiment.copy()
 
         if self.config.atm_window <= 0:

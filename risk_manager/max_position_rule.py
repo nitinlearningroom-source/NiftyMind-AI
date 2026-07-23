@@ -6,8 +6,6 @@ class MaxPositionRule(BaseRiskRule):
 
     def evaluate(
         self,
-        decision,
-        context,
         account,
         config
     ):

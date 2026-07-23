@@ -274,6 +274,5 @@ class MarketAnalyzer:
         elif volatility == Volatility.LOW:
             bullish += 5
             bearish += 5
-
-        print(f"Confidence Scores - Bullish: {bullish}, Bearish: {bearish}")
+            
         return bullish, bearish  

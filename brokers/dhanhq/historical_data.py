@@ -36,14 +36,6 @@ class HistoricalDataService:
         from_date = from_date.strftime("%Y-%m-%d")
         to_date = to_date.strftime("%Y-%m-%d")
 
-        print(f"Security ID      : {self.info.security_id}")
-        print(f"Exchange Segment : {self.info.exchange_segment}")
-        print(f"Instrument Type  : {self.info.instrument_type}")
-        print(f"From Date        : {from_date}")
-        print(f"To Date          : {to_date}")
-        expiry_code1 = 0
-        
-
         #Define Parameters for Reliance Industries Ltd
         security_id = self.info.security_id          # Dhan Security ID for RELIANCE (NSE EQ)
         exchange_segment = self.info.exchange_segment # Equity Segment
@@ -80,11 +72,8 @@ class HistoricalDataService:
         """
         Convert Dhan historical API response into a standard OHLCV DataFrame.
         """
-        print(response)
         if not response:
             raise ValueError("Empty response received from Dhan API.")
-
-        print("Data Frame", response)
 
         if response.get("status") != "success":
             raise RuntimeError(response.get("remarks", "Unknown error from Dhan API."))

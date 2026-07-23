@@ -4,7 +4,6 @@ import json
 import logging
 from datetime import datetime
 import pandas as pd
-from pprint import pprint
 from brokers.dhanhq.auth import DhanClient
 from core.models.models import Unserlying_SentimentSnapshot
 from core.models.underlying import Underlying
@@ -44,7 +43,6 @@ class Underlying_Sentiments_Service:
                 under_exchange_segment=underlying.exchange_segment,
                 expiry=expiry_date
             )
-            print(f"response_Data length : {response} \n Input Data: Id {underlying.security_id} , segment : {underlying.exchange_segment} , expiry : {expiry_date}")
             return response
 
         except Exception as ex:
