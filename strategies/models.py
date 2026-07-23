@@ -1,7 +1,11 @@
 from dataclasses import dataclass, field
 
+from TraderSelector.selected_trade import SelectedTrade
 from core.constants.enums import Trend
-from core.models.models import MarketAnalysis, OptionChainAnalysis
+from core.models.models import MarketAnalysis, Underlying_Sentiment
+from decision_engine.decision_result import DecisionResult
+from option_chain.models.option_analysis import OptionAnalysis
+from risk_manager.risk_assessment import RiskAssessment
 
 
 
@@ -11,7 +15,11 @@ from core.models.models import MarketAnalysis, OptionChainAnalysis
 class StrategyContext:
 
     market: MarketAnalysis
-    option_chain: OptionChainAnalysis
+    underlying_Sentiment : Underlying_Sentiment
+    option_Chain: OptionAnalysis
+    decision: DecisionResult | None = None
+    selected_trade: SelectedTrade | None = None
+    risk: RiskAssessment | None = None
 
     # ------------------------------------------------------------------
     # Convenience Properties

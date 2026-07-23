@@ -1,9 +1,9 @@
 
 import datetime
 
-from core.analyzer.option_chain_analyzer import OptionChainAnalyzer
+from core.analyzer.Underlying_Sentiments_analyzer import OptionChainAnalyzer
 from core.constants.underlyings import NIFTY
-from services.option_chain_service import OptionChainService
+from core.analyzer.Underlying_Sentiments_service import OptionChainService
 
 
 analysis = OptionChainService()

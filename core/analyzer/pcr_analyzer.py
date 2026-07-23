@@ -1,5 +1,5 @@
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
-from core.models.models import OptionAnalysisConfig, OptionChainSnapshot, PCRAnalysis
+from core.models.models import OptionAnalysisConfig, PCRAnalysis, Unserlying_SentimentSnapshot
 from strategies.enums import PCRSignal
 
 
@@ -10,7 +10,7 @@ class PCRAnalyzer(BaseOptionAnalyzer):
 
     def analyze(
         self,
-        snapshot: OptionChainSnapshot
+        snapshot: Unserlying_SentimentSnapshot
     ) -> PCRAnalysis:
         
         df = self.get_option_chain(snapshot)

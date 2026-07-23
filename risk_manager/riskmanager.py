@@ -1,3 +1,4 @@
+from decision_engine.enums.decision import Decision
 from risk_manager.risk_assessment import RiskAssessment
 from risk_manager.models.position_size import PositionSize
 
@@ -11,7 +12,6 @@ class RiskManager:
 
     def assess(
         self,
-        decision,
         context,
         account
     ) -> RiskAssessment:
@@ -28,7 +28,6 @@ class RiskManager:
         for rule in self.rules:
 
             result = rule.evaluate(
-                decision=decision,
                 context=context,
                 account=account,
                 config=self.config
@@ -57,8 +56,12 @@ class RiskManager:
                 account.capital *
                 self.config.risk_per_trade_pct / 100
             )
-
-            premium = context.option_chain.atm_option_price
+            if context.decision.decision == Decision.BUY_CALL:
+                premium = context.option_chain.atm_call
+            elif context.decision.decision == Decision.BUY_PUT:
+                premium = context.option_chain.atm_put
+            else:
+                premium=0
 
             lot_size = context.option_chain.lot_size
 

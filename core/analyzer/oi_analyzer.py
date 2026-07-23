@@ -1,6 +1,6 @@
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
 from core.constants.enums import OITrend
-from core.models.models import OIAnalysis,  OptionAnalysisConfig, OptionChainSnapshot
+from core.models.models import OIAnalysis,  OptionAnalysisConfig, Unserlying_SentimentSnapshot
 
 
 class OIAnalyzer(BaseOptionAnalyzer):
@@ -10,7 +10,7 @@ class OIAnalyzer(BaseOptionAnalyzer):
 
     def analyze(
         self,
-        snapshot: OptionChainSnapshot
+        snapshot: Unserlying_SentimentSnapshot
     ) -> OIAnalysis:
 
         df = self.get_option_chain(snapshot)

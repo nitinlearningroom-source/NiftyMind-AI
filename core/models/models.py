@@ -15,6 +15,7 @@ from core.constants.enums import (
     Recommendation,
     VolumeConfirmation,
 )
+from option_chain.models.option_contract import OptionContract
 from strategies.enums import PCRSignal
 
 
@@ -40,7 +41,7 @@ class OptionAnalysisConfig :
     iv_mode: str = "ATM"
 
 @dataclass
-class OptionChainAnalysis:
+class Underlying_Sentiment:
     """
     Aggregated analysis of the option chain.
 
@@ -78,12 +79,13 @@ class OIAnalysis:
     trend: OITrend
 
 @dataclass
-class OptionChainSnapshot:
+class Unserlying_SentimentSnapshot:
     underlying: Underlying
     expiry: str
     spot_price: float
     timestamp: datetime
     option_chain: pd.DataFrame
+    ##option_chain: OptionContract
 
 @dataclass
 class PCRAnalysis:

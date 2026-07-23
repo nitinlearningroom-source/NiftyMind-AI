@@ -6,10 +6,8 @@ class CapitalRule(BaseRiskRule):
 
     def evaluate(
         self,
-        decision,
         context,
-        account,
-        config
+        account
     ):
 
         premium = context.option_chain.atm_option_price

@@ -6,8 +6,6 @@ class DailyLossRule(BaseRiskRule):
 
     def evaluate(
         self,
-        decision,
-        context,
         account,
         config
     ):

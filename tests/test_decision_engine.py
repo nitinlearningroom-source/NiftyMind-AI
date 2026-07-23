@@ -1,10 +1,11 @@
 
 
-from core.analyzer import option_chain_analyzer
+from core.analyzer import Underlying_Sentiments_analyzer
 from core.analyzer.market_analyzer import MarketAnalyzer
 from core.constants.underlyings import NIFTY
+from data.Instrument_type import InstrumentType
 from decision_engine.decision_engine import DecisionEngine
-from services.option_chain_service import OptionChainService
+from core.analyzer.Underlying_Sentiments_service import OptionChainService
 from strategies.Rules.rule_engine import RuleEngine
 from strategies.Rules.rule_registry import RuleRegistry
 from strategies.models import StrategyContext
@@ -18,9 +19,10 @@ from core.indicators.indicator_engine import IndicatorEngine
 
 history = HistoricalDataService()
 
-df = history.get_daily("RELIANCE", 320)
+df = history.get_daily("NIFTY",instrument_type=InstrumentType.INDEX,days= 1)
 
 
+print("DF",df)
 indicator_engine = IndicatorEngine(df)
 indicator_engine.calculate_all()
 
@@ -28,7 +30,7 @@ analysis = OptionChainService()
 option_analysis = analysis.get_option_chain(NIFTY,expiry_date="2026-07-21")
 
 market = MarketAnalyzer(indicator_engine).analyze()
-option = option_chain_analyzer.OptionChainAnalyzer().analyze(snapshot=option_analysis)
+option = Underlying_Sentiments_analyzer.OptionChainAnalyzer().analyze(snapshot=option_analysis)
 
 
 engine: RuleEngine[list] = RuleEngine(

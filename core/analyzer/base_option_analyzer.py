@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 import pandas as pd
-from core.models.models import OptionAnalysisConfig, OptionChainSnapshot
+from core.models.models import OptionAnalysisConfig, Unserlying_SentimentSnapshot
 
 
 class BaseOptionAnalyzer(ABC):
@@ -22,7 +22,7 @@ class BaseOptionAnalyzer(ABC):
 
     def get_option_chain(
         self,
-        snapshot: OptionChainSnapshot
+        snapshot: Unserlying_SentimentSnapshot
     ) -> pd.DataFrame:
         """
         Returns option chain filtered around ATM.

@@ -2,7 +2,7 @@ from __future__ import annotations
 import pandas as pd
 
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
-from core.models.models import GreeksAnalysis, OptionAnalysisConfig, OptionChainSnapshot
+from core.models.models import GreeksAnalysis, OptionAnalysisConfig, Unserlying_SentimentSnapshot
 
 
 
@@ -32,7 +32,7 @@ class GreeksAnalyzer(BaseOptionAnalyzer):
 
     def analyze(
         self,
-        snapshot: OptionChainSnapshot
+        snapshot: Unserlying_SentimentSnapshot
     ) -> GreeksAnalysis:
 
         df = self.get_option_chain(snapshot)

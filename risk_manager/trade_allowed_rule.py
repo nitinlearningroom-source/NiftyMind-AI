@@ -8,9 +8,6 @@ class TradeAllowedRule(BaseRiskRule):
     def evaluate(
         self,
         decision,
-        context,
-        account,
-        config
     ):
 
         if not decision.trade_allowed:

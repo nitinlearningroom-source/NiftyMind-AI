@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
 from core.constants.enums import IVTrend
-from core.models.models import IVAnalysis, OptionAnalysisConfig, OptionChainSnapshot
+from core.models.models import IVAnalysis, OptionAnalysisConfig, Unserlying_SentimentSnapshot
 
 
 class IVAnalyzer(BaseOptionAnalyzer):
@@ -23,7 +23,7 @@ class IVAnalyzer(BaseOptionAnalyzer):
 
     def analyze(
         self,
-        snapshot: OptionChainSnapshot
+        snapshot: Unserlying_SentimentSnapshot
     ) -> IVAnalysis:
 
         df = self.get_option_chain(snapshot)
