@@ -39,5 +39,11 @@ class TradeSelector:
                 contract=option.atm_put,
                 action="BUY"
             )
+        elif decision.decision == Decision.NO_TRADE:
+            return SelectedTrade(
+                contract=option.atm_call,
+                action="NO Trade"
+            )
+            
 
         raise ValueError("No trade selected.")

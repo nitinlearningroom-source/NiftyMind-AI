@@ -31,7 +31,7 @@ class IVRule(BaseRule):
 
     def calculate_score(self, context: StrategyContext) -> int:
 
-        iv = context.option_chain.iv_analysis
+        iv = context.underlying_Sentiment.iv_analysis
 
         score = 0
 
@@ -90,7 +90,7 @@ class IVRule(BaseRule):
 
     def build_reasons(self, context: StrategyContext) -> list[str]:
 
-        iv = context.option_chain.iv_analysis
+        iv = context.underlying_Sentiment.iv_analysis
 
         return [
 
@@ -116,7 +116,7 @@ class IVRule(BaseRule):
 
     def build_warnings(self, context: StrategyContext) -> list[str]:
 
-        iv = context.option_chain.iv_analysis
+        iv = context.underlying_Sentiment.iv_analysis
 
         warnings = []
 

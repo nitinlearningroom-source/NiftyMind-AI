@@ -23,25 +23,12 @@ df = history.get_daily("NIFTY",InstrumentType.INDEX, 320)
 
 indicator_engine = IndicatorEngine(df)
 indicator_engine.calculate_all()
-
+market_result = MarketAnalyzer(indicator_engine).analyze()
 
 underlying_Sentiments_Service = Underlying_Sentiments_Service()
-sentiment_analysis = underlying_Sentiments_Service.get_option_chain(NIFTY,expiry_date="2026-07-28")
+sentiment_analysis = underlying_Sentiments_Service.Get_Sentiment_OptionData(NIFTY,expiry_date="2026-07-28")
 
-#print("option_chain", option_analysis)
-
-market = MarketAnalyzer(indicator_engine).analyze()
-option = Underlying_Sentiments_analyzer.Underlying_SentimentsAnalyzer().analyze(snapshot=sentiment_analysis)
-
-#--------------
-
-option_service = Option_Service()
-
-option_chain = option_service.get_option_chain(NIFTY,expiry_date="2026-07-28")
-
-analyzer = Option_Analyzer()
-
-analysis = analyzer.analyze(option_chain)
+sentiment_result = Underlying_Sentiments_analyzer.Underlying_SentimentsAnalyzer().analyze(snapshot=sentiment_analysis)
 
 # print("option",option)
 
@@ -50,20 +37,27 @@ engine: RuleEngine[list] = RuleEngine(
  )
 
 strategy_context = StrategyContext(
-    market=market,
-    underlying_Sentiment=option,
-    option_Chain=option_chain
+    market=market_result,
+    underlying_Sentiment=sentiment_result,
+    option_Chain=sentiment_result.Option_Analysis
  )
 rule_engine_result = engine.evaluate(strategy_context)
 
 decision_engine = DecisionEngine();
 decision_result = decision_engine.decide(context=strategy_context,rule_result=rule_engine_result)
 
+print("decision -",decision_result);
 
-strategy_context.decision=decision_result
 tradeSelector = TradeSelector()
-strategy_context.selected_trade = tradeSelector.select(decision=decision_result,option=option_chain)
+selected_trade = tradeSelector.select(decision=decision_result,option=sentiment_result.Option_Analysis)
 
+strategy_context = StrategyContext(
+    market=market_result,
+    underlying_Sentiment=sentiment_result,
+    option_Chain=sentiment_result.Option_Analysis,
+    decision =  decision_result,
+    selected_trade=selected_trade
+ )
 
 
 # account = TradingAccount(

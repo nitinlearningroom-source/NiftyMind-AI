@@ -29,7 +29,7 @@ class MaxPainRule(BaseRule):
 
     def calculate_score(self, context: StrategyContext) -> int:
 
-        mp =  context.option_chain.max_pain_analysis
+        mp =  context.underlying_Sentiment.max_pain_analysis
 
         score = 0
 
@@ -92,7 +92,7 @@ class MaxPainRule(BaseRule):
 
     def build_reasons(self, context: StrategyContext) -> list[str]:
 
-        mp =  context.option_chain.max_pain_analysis
+        mp =  context.underlying_Sentiment.max_pain_analysis
 
         return [
 
@@ -116,7 +116,7 @@ class MaxPainRule(BaseRule):
 
     def build_warnings(self, context: StrategyContext) -> list[str]:
 
-        mp =  context.option_chain.max_pain_analysis
+        mp =  context.underlying_Sentiment.max_pain_analysis
 
         warnings = []
 

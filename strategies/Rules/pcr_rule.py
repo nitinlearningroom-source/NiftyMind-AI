@@ -30,7 +30,7 @@ class PCRRule(BaseRule):
 
     def calculate_score(self, context: StrategyContext) -> int:
 
-        pcr = context.option_chain.pcr_analysis
+        pcr = context.underlying_Sentiment.pcr_analysis
 
         score = 0
 
@@ -87,7 +87,7 @@ class PCRRule(BaseRule):
 
     def build_reasons(self, context: StrategyContext) -> list[str]:
 
-        pcr = pcr = context.option_chain.pcr_analysis
+        pcr = pcr = context.underlying_Sentiment.pcr_analysis
 
         return [
 
@@ -105,7 +105,7 @@ class PCRRule(BaseRule):
 
     def build_warnings(self, context: StrategyContext) -> list[str]:
 
-        pcr = pcr = context.option_chain.pcr_analysis
+        pcr = pcr = context.underlying_Sentiment.pcr_analysis
 
         warnings = []
 

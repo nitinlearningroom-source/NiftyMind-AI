@@ -1,14 +1,21 @@
+from core.analyzer.base_option_analyzer import BaseOptionAnalyzer
+from core.models.models import OptionAnalysisConfig, Unserlying_SentimentSnapshot
 from option_chain.models.option_analysis import OptionAnalysis
 from option_chain.models.option_chain_snapshot import OptionSnapshot
 from option_chain.models.option_contract import OptionContract
 
 
-class Option_Analyzer:
+class Option_Analyzer(BaseOptionAnalyzer):
 
-    def analyze(self, snapshot: OptionSnapshot) -> OptionAnalysis:
+    def __init__(self, config: OptionAnalysisConfig):
+        super().__init__(config)
 
-        calls = [c for c in snapshot.contracts if c.option_type.upper() == "CALL"]
-        puts = [p for p in snapshot.contracts if p.option_type.upper() == "PUT"]
+    def analyze(self, snapshot: Unserlying_SentimentSnapshot) -> OptionAnalysis:
+
+        option_chain = snapshot.option_chain
+        
+        calls = [c for c in option_chain.contracts if c.option_type.upper() == "CALL"]
+        puts = [p for p in option_chain.contracts if p.option_type.upper() == "PUT"]
 
         if not calls or not puts:
             raise ValueError("Option chain does not contain both CALL and PUT contracts.")
@@ -17,7 +24,7 @@ class Option_Analyzer:
         # ATM Strike
         # -------------------------
         atm_strike = min(
-            {c.strike for c in snapshot.contracts},
+            {c.strike for c in option_chain.contracts},
             key=lambda strike: abs(strike - snapshot.spot_price)
         )
 

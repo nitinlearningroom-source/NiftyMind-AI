@@ -8,6 +8,8 @@ from pprint import pprint
 from brokers.dhanhq.auth import DhanClient
 from core.models.models import Unserlying_SentimentSnapshot
 from core.models.underlying import Underlying
+from option_chain.models.option_chain_snapshot import OptionSnapshot
+from option_chain.models.option_contract import OptionContract
 
 
 
@@ -29,7 +31,7 @@ class Underlying_Sentiments_Service:
     def __init__(self):
         self.client = DhanClient().client
 
-    def get_option_chain(
+    def _get_option_chain(
         self,
         underlying: Underlying,
         expiry_date: str,
@@ -37,24 +39,28 @@ class Underlying_Sentiments_Service:
     ) -> Unserlying_SentimentSnapshot:
 
         try:
-
-            #expiries = self.client.expiry_list(under_security_id=13, under_exchange_segment="IDX_I")
-            #print(expiries)
-  
-
             response = self.client.option_chain(
                 under_security_id= underlying.security_id,
                 under_exchange_segment=underlying.exchange_segment,
                 expiry=expiry_date
             )
-            return self._normalize_response(response=response, expiry=expiry_date, underlying=underlying)
+            print(f"response_Data length : {response} \n Input Data: Id {underlying.security_id} , segment : {underlying.exchange_segment} , expiry : {expiry_date}")
+            return response
 
         except Exception as ex:
             logger.exception("Failed to fetch option chain.")
             raise ex
 
     # ----------------------------------------------------
-
+    def Get_Sentiment_OptionData(self,
+            underlying: Underlying,
+            expiry_date: str,
+            )-> Unserlying_SentimentSnapshot:
+          response_data =self._get_option_chain(underlying=underlying,expiry_date=expiry_date)
+          
+          return self._normalize_response(response=response_data, expiry=expiry_date, underlying=underlying)
+     
+ 
     def _normalize_response(self, 
                             response: any, 
                             expiry: str, 
@@ -120,11 +126,100 @@ class Underlying_Sentiments_Service:
 
           df = pd.DataFrame(rows)
           df = df.sort_values("strike").reset_index(drop=True)
-
+          
+          option_data = self.Get_Option_Chanin(response_data=response,underlying=underlying.name,expiry_date=expiry)
+          
           return Unserlying_SentimentSnapshot(
                underlying=underlying,
                expiry=expiry,
                spot_price=spot_price,
-               option_chain=df,
-               timestamp=datetime.now(),
+               sentiment=df,
+               option_chain=option_data,
+               timestamp=datetime.now()
           )
+          
+    def Get_Option_Chanin(self,response_data,
+            underlying: str,
+            expiry_date: str,
+            )-> OptionSnapshot:
+          #response_data =self._get_option_chain(underlying=underlying,expiry_date=expiry_date)
+          
+          with open("Option_Chain_Data.json", "w") as file:
+               json.dump(response_data, file, indent=4)
+               
+          spot_price = float(response_data["data"]["data"]["last_price"])
+          
+          contracts = []
+
+          option_chain = response_data["data"]["data"]["oc"]
+
+          for strike_str, option_data in option_chain.items():
+
+               strike = float(strike_str)
+
+               # Call Option
+               contracts.append(
+                    self._create_contract(
+                    strike=strike,
+                    option_type="CALL",
+                    option_data=option_data["ce"],
+                    expiry=expiry_date,
+                    underlying=underlying
+                    )
+               )
+
+               # Put Option
+               contracts.append(
+                    self._create_contract(
+                    strike=strike,
+                    option_type="PUT",
+                    option_data=option_data["pe"],
+                    expiry=expiry_date,
+                    underlying=underlying
+                    )
+               )
+
+
+          return OptionSnapshot(
+               underlying=underlying,
+               expiry=expiry_date or "",
+               spot_price=float(spot_price),
+               contracts=contracts
+          )
+    
+    def _create_contract(
+            self,
+            strike: float,
+            option_type: str,
+            option_data: dict,
+            expiry: str,
+            underlying: str,
+        ) -> OptionContract:
+    
+            return OptionContract(
+                symbol=f"{underlying}_{expiry}_{int(strike)}_{option_type}",
+                security_id=str(option_data["security_id"]),
+                strike=strike,
+                option_type=option_type,
+                expiry=expiry,
+    
+                ltp=float(option_data["last_price"]),
+    
+                bid=float(option_data["top_bid_price"]),
+                ask=float(option_data["top_ask_price"]),
+    
+                volume=int(option_data["volume"]),
+    
+                oi=int(option_data["oi"]),
+    
+                previous_oi=int(option_data.get("previous_oi", 0)),
+    
+                oi_change=int(option_data["oi"]) - int(option_data.get("previous_oi", 0)),
+    
+                iv=float(option_data.get("implied_volatility", 0.0)),
+    
+                delta=float(option_data["greeks"].get("delta", 0.0)),
+                gamma=float(option_data["greeks"].get("gamma", 0.0)),
+                theta=float(option_data["greeks"].get("theta", 0.0)),
+                vega=float(option_data["greeks"].get("vega", 0.0)),
+            )

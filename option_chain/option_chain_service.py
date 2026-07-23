@@ -1,4 +1,5 @@
 import json
+from venv import logger
 
 from brokers.dhanhq.auth import DhanClient
 
@@ -10,7 +11,7 @@ from option_chain.models.option_contract import OptionContract
 class Option_Service:
 
     def __init__(self):
-        self.dhan = DhanClient().get_client()
+        self.client = DhanClient().client
 
     def get_option_chain(
         self,
@@ -20,12 +21,21 @@ class Option_Service:
 
         print("hello")
         print(underlying.security_id,underlying.exchange_segment,expiry_date);
-        response = self.dhan.option_chain(
-                       under_security_id= underlying.security_id,
-                       under_exchange_segment= underlying.exchange_segment,
-                       expiry=expiry_date
-                   )
-
+        # response = self.dhan.option_chain(
+        #                under_security_id= underlying.security_id,
+        #                under_exchange_segment= underlying.exchange_segment,
+        #                expiry=expiry_date
+        # )
+        
+        try:
+            response = self.client.option_chain(
+                under_security_id= underlying.security_id,
+                under_exchange_segment=underlying.exchange_segment,
+                expiry=expiry_date
+            )
+        except Exception as ex:
+            logger.exception("Failed to fetch option chain.")
+            raise ex
 
         print("response option -" ,response)
         spot_price = float(response["data"]["data"]["last_price"])

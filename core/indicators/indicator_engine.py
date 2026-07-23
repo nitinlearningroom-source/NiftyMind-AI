@@ -133,11 +133,7 @@ class IndicatorEngine(BaseIndicator):
     #-------------------------
     # SuperTrend
     #-------------------------
-    def supertrend(
-            self,
-            atr_period=None,
-            multiplier=None
-        ):
+    def supertrend(self,atr_period=None,multiplier=None):
 
         if atr_period is None:
             atr_period = settings.SUPERTREND_LENGTH
@@ -145,10 +141,8 @@ class IndicatorEngine(BaseIndicator):
         if multiplier is None:
             multiplier = settings.SUPERTREND_MULTIPLIER
 
-        self.df = TrendIndicators(self.df).supertrend(
-            atr_period,
-            multiplier
-        )
+        self.df = TrendIndicators(self.df).supertrend(atr_period,multiplier)
+
         self.logger.info("Calculating SuperTrend with atr_period: %s, multiplier: %s", atr_period, multiplier)
         return self.df
     

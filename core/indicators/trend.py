@@ -21,7 +21,7 @@ class TrendIndicators(base_indicator.BaseIndicator):
         self,
         atr_period: int = 10,
         multiplier: float = 3.0
-    ):
+        ):
         """
         Calculate SuperTrend
         """

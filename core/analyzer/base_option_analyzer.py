@@ -23,12 +23,12 @@ class BaseOptionAnalyzer(ABC):
     def get_option_chain(
         self,
         snapshot: Unserlying_SentimentSnapshot
-    ) -> pd.DataFrame:
+        ) -> pd.DataFrame:
         """
         Returns option chain filtered around ATM.
         """
 
-        df = snapshot.option_chain.copy()
+        df = snapshot.sentiment.copy()
 
         if self.config.atm_window <= 0:
             return df
@@ -41,7 +41,7 @@ class BaseOptionAnalyzer(ABC):
         self,
         df: pd.DataFrame,
         spot_price: float
-    ) -> pd.DataFrame:
+        ) -> pd.DataFrame:
 
         df = df.sort_values("strike").reset_index(drop=True)
 
@@ -59,7 +59,7 @@ class BaseOptionAnalyzer(ABC):
     def validate_columns(
         df: pd.DataFrame,
         columns: list[str]
-    ):
+        ):
 
         missing = set(columns) - set(df.columns)
 

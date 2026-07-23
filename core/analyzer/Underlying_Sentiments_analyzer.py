@@ -5,7 +5,7 @@ from core.analyzer.max_pain_analyzer import MaxPainAnalyzer
 from core.analyzer.oi_analyzer import OIAnalyzer
 from core.models.models import  OptionAnalysisConfig, Underlying_Sentiment
 from core.analyzer.pcr_analyzer import PCRAnalyzer
-from option_chain.models.option_contract import OptionContract
+from option_chain.option_chain_analyzer import Option_Analyzer
 
 
 
@@ -18,16 +18,16 @@ class Underlying_SentimentsAnalyzer:
         iv_analyzer: IVAnalyzer | None = None,
         maxpain_analyzer: MaxPainAnalyzer | None = None,
         greeks_analyzer: GreeksAnalyzer | None = None,
+        option_Analyzer:Option_Analyzer | None= None
     ):
-        
-        #todo: make this 500 configurabel
-         
+
         self.oi_analyzer = oi_analyzer or OIAnalyzer(config=OptionAnalysisConfig(atm_window=10))  
         self.pcr_analyzer = pcr_analyzer or PCRAnalyzer(config=OptionAnalysisConfig(atm_window=10))  
         self.iv_analyzer = iv_analyzer or IVAnalyzer(config=OptionAnalysisConfig(atm_window=10))  
         self.maxpain_analyzer = maxpain_analyzer or MaxPainAnalyzer(config=OptionAnalysisConfig(atm_window=10))  
         self.greeks_analyzer = greeks_analyzer or GreeksAnalyzer(config=OptionAnalysisConfig(atm_window=10))  
-
+        self.option_Analyzer = option_Analyzer or Option_Analyzer(config=OptionAnalysisConfig(atm_window=10))  
+        
     def analyze(self, snapshot):
 
         oi = self.oi_analyzer.analyze(snapshot)
@@ -40,7 +40,7 @@ class Underlying_SentimentsAnalyzer:
         
         greeks = self.greeks_analyzer.analyze(snapshot)
 
-        
+        options=self.option_Analyzer.analyze(snapshot)
 
         return Underlying_Sentiment(
                
@@ -48,7 +48,8 @@ class Underlying_SentimentsAnalyzer:
                pcr_analysis=pcr,
                iv_analysis=iv,
                max_pain_analysis=max_pain,
-               greeks_analysis=greeks 
+               greeks_analysis=greeks,
+               Option_Analysis = options
         )
 
    

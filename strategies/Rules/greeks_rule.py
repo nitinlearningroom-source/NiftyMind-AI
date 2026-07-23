@@ -31,7 +31,7 @@ class GreeksRule(BaseRule):
 
     def calculate_score(self, context: StrategyContext) -> int:
 
-        greeks = context.option_chain.greeks_analysis
+        greeks = context.underlying_Sentiment.greeks_analysis
 
         score = 0
 
@@ -95,7 +95,7 @@ class GreeksRule(BaseRule):
 
     def build_reasons(self, context: StrategyContext) -> list[str]:
 
-        greeks = context.option_chain.greeks_analysis
+        greeks = context.underlying_Sentiment.greeks_analysis
 
         return [
 
@@ -125,7 +125,7 @@ class GreeksRule(BaseRule):
 
     def build_warnings(self, context: StrategyContext) -> list[str]:
 
-        greeks = context.option_chain.greeks_analysis
+        greeks = context.underlying_Sentiment.greeks_analysis
 
         warnings = []
 

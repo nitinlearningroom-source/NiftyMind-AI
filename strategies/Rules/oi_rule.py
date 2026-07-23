@@ -33,7 +33,7 @@ class OIRule(BaseRule):
 
     def calculate_score(self, context: StrategyContext) -> int:
 
-        oi = context.option_chain.oi_analysis
+        oi = context.underlying_Sentiment.oi_analysis
         print(oi)
 
         score = 0
@@ -90,7 +90,7 @@ class OIRule(BaseRule):
 
     def build_reasons(self, context: StrategyContext) -> list[str]:
 
-        oi = context.option_chain.oi_analysis
+        oi = context.underlying_Sentiment.oi_analysis
 
         return [
 
@@ -124,7 +124,7 @@ class OIRule(BaseRule):
 
     def build_warnings(self, context: StrategyContext) -> list[str]:
 
-        oi = context.option_chain.oi_analysis
+        oi = context.underlying_Sentiment.oi_analysis
 
         warnings = []
 

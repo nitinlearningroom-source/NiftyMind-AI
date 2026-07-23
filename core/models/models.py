@@ -15,6 +15,8 @@ from core.constants.enums import (
     Recommendation,
     VolumeConfirmation,
 )
+from option_chain.models.option_analysis import OptionAnalysis
+from option_chain.models.option_chain_snapshot import OptionSnapshot
 from option_chain.models.option_contract import OptionContract
 from strategies.enums import PCRSignal
 
@@ -50,12 +52,12 @@ class Underlying_Sentiment:
 
     Contains the output of all individual analyzers.
     """
-
     oi_analysis: OIAnalysis
     pcr_analysis: PCRAnalysis
     iv_analysis: IVAnalysis
     max_pain_analysis: MaxPainAnalysis
     greeks_analysis: GreeksAnalysis
+    Option_Analysis: OptionAnalysis
 
 @dataclass
 class OIAnalysis:
@@ -84,8 +86,8 @@ class Unserlying_SentimentSnapshot:
     expiry: str
     spot_price: float
     timestamp: datetime
-    option_chain: pd.DataFrame
-    ##option_chain: OptionContract
+    sentiment: pd.DataFrame
+    option_chain: OptionSnapshot
 
 @dataclass
 class PCRAnalysis:
